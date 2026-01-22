@@ -14,4 +14,6 @@ router.post("/api/v1/tasks/create", controller.create);
 
 router.patch("/api/v1/tasks/edit/:id", controller.edit);
 
+router.delete("/api/v1/tasks/delete/:id", controller.delete);
+
 module.exports = router;
