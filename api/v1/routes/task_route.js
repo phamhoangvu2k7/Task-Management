@@ -8,4 +8,8 @@ router.get("/api/v1/tasks/detail/:id", controller.detail);
 
 router.patch("/api/v1/tasks/change_status/:id", controller.changeStatus);
 
+router.patch("/api/v1/tasks/change_multi", controller.changeMulti);
+
+// router.post("/api/v1/tasks/create", controller.create);
+
 module.exports = router;
