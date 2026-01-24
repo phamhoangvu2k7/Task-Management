@@ -11,7 +11,7 @@ module.exports.register = async (req, res) => {
     const existEmail = await User.findOne({
         email: req.body.email,
         deleted: false
-    });  
+    });
 
     if (existEmail) {
         res.json({
@@ -21,7 +21,7 @@ module.exports.register = async (req, res) => {
     } else {
         const user = new User(req.body);
         await user.save()
-        
+
         const token = user.token;
         res.cookie("token", token);
 
@@ -45,7 +45,7 @@ module.exports.login = async (req, res) => {
         if (user.password === sh256(req.body.password)) {
             const token = user.token;
             res.cookie = token;
-            
+
             res.json({
                 code: 200,
                 message: "Đăng nhập thành công!",
@@ -66,7 +66,7 @@ module.exports.login = async (req, res) => {
     }
 }
 
-// [POST] api/v1/users/forgot
+// [POST] api/v1/users/password/forgot
 module.exports.forgotPassword = async (req, res) => {
     const email = req.body.email;
     const user = await User.findOne({
@@ -108,7 +108,7 @@ module.exports.forgotPassword = async (req, res) => {
     });
 }
 
-// [POST] api/v1/users/forgot/otp
+// [POST] api/v1/users/password/otp
 module.exports.otpPassword = async (req, res) => {
     const result = await ForgotPassword.findOne({
         email: req.body.email,
@@ -125,7 +125,7 @@ module.exports.otpPassword = async (req, res) => {
     const user = await User.findOne({
         email: req.body.email
     });
-    
+
     const token = user.token;
     res.cookie("token", token);
     res.json({
@@ -133,4 +133,16 @@ module.exports.otpPassword = async (req, res) => {
         message: "Xác thức thành công",
         token: token
     })
+}
+
+// [POST] api/v1/user/password/reset
+module.exports.resetPassword = async (req, res) => {
+    await User.updateOne({ token: req.body.token }, {
+        password: sh256(req.body.password)
+    });
+
+    res.json({
+        code: 200,
+        message: "Reset success!"
+    });
 }
