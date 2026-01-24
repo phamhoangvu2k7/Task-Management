@@ -44,7 +44,7 @@ module.exports.login = async (req, res) => {
     if (user) {
         if (user.password === sh256(req.body.password)) {
             const token = user.token;
-            res.cookie = token;
+            res.cookie("token", token);
 
             res.json({
                 code: 200,
@@ -64,6 +64,19 @@ module.exports.login = async (req, res) => {
             message: "Email không tồn tại!"
         });
     }
+}
+
+// [GET] api/v1/user/detail
+module.exports.detail = async (req, res) => {
+    const data = await User.findOne({
+        token: req.cookies.token,
+        deleted: false
+    }).select("-password -token");
+
+    res.json({
+        code: 200,
+        data: data
+    })
 }
 
 // [POST] api/v1/users/password/forgot
