@@ -19,7 +19,13 @@ module.exports.register = async (req, res) => {
             message: "Email đã tồn tại!"
         });
     } else {
-        const user = new User(req.body);
+        const user = new User({
+            fullName: req.body.fullName,
+            email: req.body.email,
+            password: req.body.password,
+            token: generateHelper.generateRandomString(20)
+
+        });
         await user.save()
 
         const token = user.token;
