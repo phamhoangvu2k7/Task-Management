@@ -74,14 +74,9 @@ module.exports.login = async (req, res) => {
 
 // [GET] api/v1/user/detail
 module.exports.detail = async (req, res) => {
-    const data = await User.findOne({
-        token: req.cookies.token,
-        deleted: false
-    }).select("-password -token");
-
     res.json({
         code: 200,
-        data: data
+        data: req.user
     })
 }
 
