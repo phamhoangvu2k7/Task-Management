@@ -1,4 +1,5 @@
 const Task = require("../model/task_model");
+const User = require("../model/user_model");
 const paginationHelper = require("../../../helpers/pagination");
 const searchHelper = require("../../../helpers/Search");
 
@@ -141,15 +142,31 @@ module.exports.changeMulti = async (req, res) => {
 module.exports.create = async (req, res) => {
     try {
         req.body.createdBy = req.user.id;
+        if (req.body.listUser.length) {
+            for (let value of req.body.listUser) {
+                const result = await User.findOne({
+                    token: value,
+                    deleted: false 
+                });
+                if (!result) {
+                    res.json({
+                        code: 400,
+                        message: "Token của thành viên không tồn tại!"
+                    })
+                    return;
+                }
+            }
+        }
         const task = new Task(req.body);
         const data = await task.save();
 
         res.json({
-            code: "200",
+            code: 200,
             message: "Tạo thành công!",
             data: data
         });
     } catch (error) {
+        console.log(error);
         res.json({
             code: 400,
             message: "Không tồn tại!"
@@ -179,11 +196,11 @@ module.exports.edit = async (req, res) => {
 module.exports.delete = async (req, res) => {
     try {
         const id = req.params.id;
-        await Task.updateOne({ _id: id }, { 
+        await Task.updateOne({ _id: id }, {
             deleted: true,
             deletedAt: new Date()
         });
-    
+
         res.json({
             code: 200,
             message: "Xóa thành công!"
