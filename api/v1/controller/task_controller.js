@@ -6,6 +6,10 @@ const searchHelper = require("../../../helpers/Search");
 // [GET] /api/v1/tasks
 module.exports.index = async (req, res) => {
     const find = {
+        $or: [
+            { createdBy: req.user.id },
+            { listUser: req.user.id }
+        ],
         deleted: false
     };
 
@@ -23,7 +27,6 @@ module.exports.index = async (req, res) => {
         req.query,
         countTasks
     )
-
     // End Pagination
 
     // Sort
@@ -41,12 +44,17 @@ module.exports.index = async (req, res) => {
     }
     // End Search
 
-    const tasks = await Task.find(find)
-        .sort(sort)
-        .limit(objectPagination.limitItems)
-        .skip(objectPagination.skip)
-
-    res.json(tasks);
+    if (req.query.page) {
+        const tasks = await Task.find(find)
+            .sort(sort)
+            .limit(objectPagination.limitItems)
+            .skip(objectPagination.skip)
+        res.json(tasks);
+    }
+    else {
+        const tasks = await Task.find(find);
+        res.json(tasks);
+    }
 }
 
 // [GET] /api/v1/tasks/detail/:id
@@ -146,7 +154,7 @@ module.exports.create = async (req, res) => {
             for (let value of req.body.listUser) {
                 const result = await User.findOne({
                     token: value,
-                    deleted: false 
+                    deleted: false
                 });
                 if (!result) {
                     res.json({
