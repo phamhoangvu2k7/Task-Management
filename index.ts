@@ -1,25 +1,22 @@
-// const cors = require("cors");
-// const express = require("express");
-// const bodyParser = require("body-parser");
-// const database = require("./config/database");
-// const cookieParser = require("cookie-parser");
+import express, { Express, Request, Response } from "express";
+import * as database from "./config/database";
+import dotenv from "dotenv";
+import Task from "./api/v1/model/task_model";
 
-// require("dotenv").config();
+dotenv.config();
+database.connect();
 
-// database.connect();
+const app: Express = express();
+const port: string | number = process.env.PORT || 3000;
 
-// const route = require("./api/v1/routes/index_route");
-// const app = express();
-// const port = process.env.PORT;
+app.get("/task", async (req: Request, res: Response) => {
+    const tasks = await Task.find({
+        deleted: false
+    });
+    console.log(tasks);
+    res.json(tasks);
+});
 
-// app.use(cookieParser());
-// app.use(bodyParser.json());
-// app.use(cors());
-
-// route(app);
-
-// app.listen(port, () => {
-//     console.log(`App listening on port ${port}`);
-// });
-
-console.log("OK");
+app.listen(port, () => {
+    console.log(`App listening on port ${port}`);
+});
