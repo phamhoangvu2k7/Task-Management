@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        // "outDir": "js",
+        "outDir": "js",
         "target": "es6",
         "module": "commonjs",
         "removeComments": true,

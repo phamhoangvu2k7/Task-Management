@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const forgotPasswordSchema = new mongoose.Schema(
     { 
@@ -16,4 +16,4 @@ const forgotPasswordSchema = new mongoose.Schema(
 
 const forgotPassword = mongoose.model("forgotPassword", forgotPasswordSchema, "forgot_password");
 
-module.exports = forgotPassword;
+export default forgotPassword;

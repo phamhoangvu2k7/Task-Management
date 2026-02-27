@@ -1,8 +1,9 @@
-const User = require("../model/user_model");
+import User from "../model/user_model";
+import { NextFunction, Request, Response } from "express";
 
-module.exports.requireAuth = async (req, res, next) => {
+export const requireAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     if (req.headers.authorization) {
-        const token = req.headers.authorization.split(" ")[1];
+        const token: string = req.headers.authorization.split(" ")[1];
         const user = await User.findOne({
             token: token,
             deleted: false
@@ -16,7 +17,7 @@ module.exports.requireAuth = async (req, res, next) => {
             return;
         }
 
-        req.user = user;
+        req["user"] = user;
 
         next();
     } else {

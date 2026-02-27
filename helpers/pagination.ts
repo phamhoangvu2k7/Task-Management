@@ -1,4 +1,11 @@
-module.exports = (objectPagination, query, countRecords) => {
+interface objectPagination {
+    currentPage: number,
+    limitItems: number,
+    skip?: number,
+    totalPage?: number
+}
+
+const paginationHelper = (objectPagination: objectPagination, query: Record<string, any>, countRecords: number): objectPagination => {
     if (query.page) {
         objectPagination.currentPage = parseInt(query.page);
     }
@@ -13,3 +20,5 @@ module.exports = (objectPagination, query, countRecords) => {
 
     return objectPagination;
 }
+
+export default paginationHelper;

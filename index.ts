@@ -1,7 +1,9 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import * as database from "./config/database";
 import dotenv from "dotenv";
-import Task from "./api/v1/model/task_model";
+import mainV1Routes from "./api/v1/routes/index_route";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 database.connect();
@@ -9,24 +11,15 @@ database.connect();
 const app: Express = express();
 const port: string | number = process.env.PORT || 3000;
 
-app.get("/task", async (req: Request, res: Response) => {
-    const tasks = await Task.find({
-        deleted: false
-    });
+app.use(cors());
 
-    res.json(tasks);
-});
+app.use(cookieParser());
 
-app.get("/task/detail/:id", async (req: Request, res: Response) => {
-    const id = req.params.id as string;
+app.use(express.json()); 
 
-    const task = await Task.findOne({
-        _id: id,    
-        deleted: false,
-    });
+app.use(express.urlencoded({ extended: true }));
 
-    res.json(task);
-});
+mainV1Routes(app);
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
